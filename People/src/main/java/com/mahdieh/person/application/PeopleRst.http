@@ -7,6 +7,14 @@ Content-Type: application/json
 "code":3,
 "page": 0
 }
+##################################################################################################
+POST http://localhost:8081/ddd/people/who
+Accept: application/json
+Content-Type: application/json
+
+{
+  "code":2
+}
 ##########################################################
 DELETE http://localhost:8081/ddd/people/delete
 Accept: application/json

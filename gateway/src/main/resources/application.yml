@@ -1,0 +1,83 @@
+# http://mageddo.com/tools/yaml-converter
+server:
+  port: 8080
+# ----------- Eureka SD address for POST(Register),PUT(HeartBeat),Delete,Get
+eureka:
+  client:
+    service-url:
+      defaultZone: http://192.168.1.39:8761/eureka
+# -- Spring & Cloud LoadBalancer,gateway
+spring:
+  application:
+    name: gateway
+  cloud:
+    loadbalancer:
+      service-discovery:
+        timeout: 3000
+      configurations: default
+      retry:
+        max-retries-on-same-service-instance: 0
+        max-retries-on-next-service-instance: 1
+    gateway:
+      default-filters: #DefaultFilter=GlobalFilters : filter for all the routes
+        - name: Retry
+          args:
+            retries: 3
+            statuses: BAD_GATEWAY,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT
+            methods: GET,POST,PUT
+            exceptions: org.springframework.cloud.gateway.support.NotFoundException,java.io.IOException,org.springframework.cloud.gateway.support.TimeoutException
+      #      - PrefixPath=/ver5
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: people
+          uri: lb://people
+          predicates:
+            - Path=/ddd/people/who
+          filters: # WebFilter=GatewayFilter : filter for every single route
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: lb://gateway/fb/who
+        - id: products
+          uri: lb://product
+          predicates:
+            - Path=/ddd/product/find
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: lb://gateway/fb/showproduct
+        - id: shopping
+          uri: lb://shopping
+          predicates:
+            - Path=/ddd/shopping/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: lb://gateway/fb/
+        - id: payment
+          uri: lb://finance
+          predicates:
+            - Path=/ddd/finance/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: lb://gateway/fb/
+# ---------------circuitbreaker resilience4j
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        sliding-window-size: 10 #Wait for 10 calls
+        minimum-number-of-calls: 5 #Count based wait min to 5 fail to open circuit
+        permitted-number-of-calls-in-half-open-state: 3 #Toggle to close/open state
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s #Time based wait min to 5 fail to open circuit
+        failure-rate-threshold: 50
+        event-consumer-buffer-size: 10

@@ -5,7 +5,7 @@ package com.mahdieh.product.domain.service;
   @Date 11/14/21
   @Time 12:00 PM
   Created by Intellije IDEA
-  Description:
+  Description: Business Logic
 */
 
 import com.mahdieh.product.application.Utility;

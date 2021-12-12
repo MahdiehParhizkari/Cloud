@@ -10,6 +10,13 @@
     <name>Cloud</name>
     <description>Devops tools</description>
     <url>https://github.com/MahdiehParhizkari/</url>
+    <packaging>pom</packaging>
+    <modules>
+        <module>Finance</module>
+        <module>People</module>
+        <module>Product</module>
+        <module>Shopping</module>
+    </modules>
     <developers>
         <developer>
             <id>Afshin.Parhizkari</id>

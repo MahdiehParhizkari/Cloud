@@ -9,6 +9,7 @@ package com.mahdieh.Shopping.infrastructure.resource;
 */
 
 import com.mahdieh.Shopping.domain.entity.Person;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,13 +21,16 @@ import java.util.Arrays;
 
 @Service
 public class PeopleRso {
-    @Value("${people.find}") private String findPath;
+    @Autowired RestTemplate restTemplate;
+    @Autowired ResorceConfig resoConfig;
+    @Value("${people.who}") private String serviceName;
     public Person find(String inputValue) throws IOException {
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request =new HttpEntity<String>(inputValue, headers);
-        Person[] persons =restTemplate.postForObject(findPath, request, Person[].class);
+        //Person[] persons =restTemplate.postForObject(resoConfig.getURI("people")+serviceName, request, Person[].class);
+        Person[] persons =restTemplate.postForObject(serviceName, request, Person[].class);
+
         //String productJson =restTemplate.postForObject(findPath, request, String.class);
         return Arrays.asList(persons).get(0);
     }

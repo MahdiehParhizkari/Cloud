@@ -175,4 +175,6 @@ public class Person {
     public void setContactsByPersonpk(List<Contact> contactsByPersonpk) {
         this.contactsByPersonpk = contactsByPersonpk;
     }
+
+    public interface PersonLight{}
 }
