@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +29,7 @@ import javax.validation.Valid;
 @RequestMapping(value = "/people")
 public class PeopleRst {
     @Autowired private PersonSrv srv;
+    public static final Logger logger = LoggerFactory.getLogger(PeopleRst.class);
 
     @Operation(summary = "return a customer or customers")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -76,7 +79,7 @@ public class PeopleRst {
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Person.PersonLight.class)
     public ResponseEntity<String> whoami(@RequestBody String receivedData) throws Exception {
-        System.out.println("Attention: Some App call this Instance");
+        logger.info("Attention: Some App call this Instance");
         JSONObject json = new JSONObject(receivedData);
         Integer code=json.optInt("code",0);
         String response=(new ObjectMapper()).writeValueAsString(srv.find(code,0));
